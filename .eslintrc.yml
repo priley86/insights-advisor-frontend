@@ -57,8 +57,8 @@ rules:
     - children: true
     - allowMultiline: false
     - spacing:
-      - objectLiterals:
-        - never
+        - objectLiterals:
+            - never
   key-spacing: 2
   keyword-spacing: 2
   linebreak-style:
@@ -95,7 +95,7 @@ rules:
     - error
     - blankLine: always
       prev: block-like
-      next: "*"
+      next: '*'
   quote-props:
     - error
     - as-needed
@@ -118,3 +118,4 @@ rules:
   yoda:
     - error
     - never
+  no-console: 'warn'

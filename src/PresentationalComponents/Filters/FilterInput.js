@@ -26,45 +26,43 @@ class FilterInput extends Component {
         }
 
         this.setState({ ...updateState });
-        addRemoveFilters(
-            value,
-            param,
-            type,
-            checked
-        );
+        addRemoveFilters(value, param, type, checked);
     };
 
-    render () {
+    render() {
         const { label, id, param, value, type, filters } = this.props;
         const { checked } = this.state;
 
         return (() => {
             switch (type) {
                 case 'checkbox':
-                    return <Checkbox
-                        aria-label={ label }
-                        id={ id }
-                        isChecked={ checked }
-                        label={ label }
-                        onChange={ this.handleChange }
-                        param={ param }
-                        value={ value }
-                    />;
+                    return (
+                        <Checkbox
+                            aria-label={ label }
+                            id={ id }
+                            isChecked={ checked }
+                            label={ label }
+                            onChange={ this.handleChange }
+                            param={ param }
+                            value={ value }
+                        />
+                    );
                 case 'radio':
-                    return <Radio
-                        isChecked={ filters[param] === value }
-                        aria-label={ label }
-                        id={ id }
-                        label={ label }
-                        name={ param }
-                        onChange={ this.handleChange }
-                        param={ param }
-                        value={ value }
-                    />;
+                    return (
+                        <Radio
+                            isChecked={ filters[param] === value }
+                            aria-label={ label }
+                            id={ id }
+                            label={ label }
+                            name={ param }
+                            onChange={ this.handleChange }
+                            param={ param }
+                            value={ value }
+                        />
+                    );
             }
         })();
     }
-
 }
 
 FilterInput.propTypes = {
@@ -74,10 +72,12 @@ FilterInput.propTypes = {
     id: PropTypes.string,
     label: PropTypes.string,
     param: PropTypes.string,
-    value: PropTypes.string,
+    value: PropTypes.any,
     filters: PropTypes.object,
     type: PropTypes.string
 };
 
+FilterInput.defaultProps = {
+    value: ''
+};
 export default FilterInput;
-

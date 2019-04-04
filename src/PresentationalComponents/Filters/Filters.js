@@ -4,17 +4,18 @@ import { TextInput, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 import { routerParams } from '@red-hat-insights/insights-frontend-components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { FILTER_CATEGORIES } from '../../AppConstants';
 import * as AppActions from '../../AppActions';
 import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
 import FilterDropdown from './FilterDropdown.js';
 
 class Filters extends Component {
-    componentWillUnmount () {
+    componentWillUnmount() {
         this.props.setFilters({});
     }
 
-    componentDidUpdate (prevProps) {
+    componentDidUpdate(prevProps) {
         if (this.props.externalFilters !== prevProps.externalFilters) {
             const filterKey = Object.keys(this.props.externalFilters)[0];
             if (filterKey) {
@@ -23,16 +24,13 @@ class Filters extends Component {
         }
     }
 
-    changeSearchValue = debounce(
-        value => {
-            const filter = { ...this.props.filters };
-            const text = value.length ? { text: value } : {};
-            delete filter.text;
-            this.props.setFilters({ ...filter, ...text });
-            this.props.fetchAction({ ...filter, ...text });
-        },
-        800
-    );
+    changeSearchValue = debounce(value => {
+        const filter = { ...this.props.filters };
+        const text = value.length ? { text: value } : {};
+        delete filter.text;
+        this.props.setFilters({ ...filter, ...text });
+        this.props.fetchAction({ ...filter, ...text });
+    }, 800);
 
     addFilter = (param, value, type) => {
         let newFilter;
@@ -50,7 +48,12 @@ class Filters extends Component {
     };
 
     removeFilter = (key, value) => {
-        const newFilter = { [key]: this.props.filters[key].split(',').filter(item => Number(item) !== Number(value)).join(',') };
+        const newFilter = {
+            [key]: this.props.filters[key]
+            .split(',')
+            .filter(item => Number(item) !== Number(value))
+            .join(',')
+        };
 
         if (newFilter[key].length) {
             this.props.setFilters({ ...this.props.filters, ...newFilter });
@@ -63,32 +66,26 @@ class Filters extends Component {
         }
     };
 
-    render () {
+    render() {
         const { children, searchPlaceholder, filters, hideCategories } = this.props;
         return (
             <>
                 <ToolbarGroup>
-                    <ToolbarItem className='pf-u-mr-xl'>
-                        <TextInput
-                            aria-label='Search'
-                            onChange={ this.changeSearchValue }
-                            type='search'
-                            value={ undefined }
-                            placeholder={ searchPlaceholder }/>
+                    <ToolbarItem className="pf-u-mr-xl">
+                        <TextInput aria-label="Search" onChange={ this.changeSearchValue } type="search" value={ '' } placeholder={ searchPlaceholder } />
                     </ToolbarItem>
-                    <ToolbarItem className='pf-u-mr-md'>
+                    <ToolbarItem className="pf-u-mr-md">
                         <FilterDropdown
                             filters={ filters }
                             addFilter={ this.addFilter }
                             removeFilter={ this.removeFilter }
+                            filterCategories={ FILTER_CATEGORIES }
                             hideCategories={ hideCategories }
                         />
                     </ToolbarItem>
                 </ToolbarGroup>
                 <ToolbarGroup>
-                    <ToolbarItem>
-                        { children }
-                    </ToolbarItem>
+                    <ToolbarItem>{ children }</ToolbarItem>
                 </ToolbarGroup>
             </>
         );
@@ -110,8 +107,17 @@ const mapStateToProps = (state, ownProps) => ({
     ...ownProps
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-    setFilters: (filters) => AppActions.setFilters(filters)
-}, dispatch);
+const mapDispatchToProps = dispatch =>
+    bindActionCreators(
+        {
+            setFilters: filters => AppActions.setFilters(filters)
+        },
+        dispatch
+    );
 
-export default routerParams(connect(mapStateToProps, mapDispatchToProps)(Filters));
+export default routerParams(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(Filters)
+);
